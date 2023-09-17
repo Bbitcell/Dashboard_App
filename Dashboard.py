@@ -82,7 +82,7 @@ if button_1:
     fig1, ax1 = plt.subplots()
     ax1.pie(edited_date["Current Achievement Rate"], labels=edited_date["Reasons for Incompletion"], autopct='%1.1f%%',
             shadow=False, startangle=90)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    ax1.axis('equal')  
     st.pyplot(fig1, use_container_width = False)
 st.divider()
 st.header("Date of Completion & Completed Topics")
