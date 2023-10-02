@@ -60,7 +60,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 st.set_page_config(layout="wide")
 
 
-data_url = fr"C:\Users\Omar\Documents\Python Files\Streamlit\Dummy DATA - Sheet1 (3).csv"
+data_url = fr"Dummy DATA - Sheet1 (3).csv"
 
 df = pd.read_csv(data_url)
 
