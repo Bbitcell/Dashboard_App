@@ -1,0 +1,22 @@
+Projects,Management,Project Manager,Project Supervisor,Number of Activities,Budget,Total Cost,Activities Type,KPI,Actual Performance,Target,Activities,Status,Achievement,Cost,Department
+X,A,Dr B,Dr A,23,450000,0,A,BA,90.5,90,A,Not Started,80,5325,CS
+,,,,,,,,,,,B,Started,3,23,Nurse
+,,,,,,,,,,,C,Started,45,1523,EMS
+,,,,,,,,AB,80,42,D,Not Started,62,124,CS
+,,,,,,,,,,,E,Started,34,123,Respiratory
+,,,,,,,,,,,A,Not Started,21,124,Information Technology
+,,,,,,,,,,,F,Started,35,23,Health Information System
+Y,B,Dr C,Dr G,12,123125,0,B,CA,23,20,C,Not Started,21,231,Nurse
+,,,,,,,,,,,G,Started,34,123,EMS
+,,,,,,,,,,,E,Not Started,31,235,CS
+,,,,,,,,CB,12,11,CD,Started,53,236,Respiratory
+,,,,,,,,,,,VD,Not Started,63,112,Respiratory
+,,,,,,,,,,,AD,Not Started,52,612,Information Technology
+,,,,,,,,,,,WE,Started,32,512,Health Information System
+Z,Bc,Dr D,Dr J,123,15125,2321,2132,CA,23,20,d,Not Started,21,231,CS
+,,,,,,,,,,,WE,Started,34,123,CS
+,,,,,,,,,,,gf,Not Started,31,235,CS
+,,,,,,,,CB,324,34,cv,Started,23,412,Information Technology
+,,,,,,,,,,,de,Not Started,132,51,Information Technology
+,,,,,,,,,,,fed,Not Started,15,123,Information Technology
+,,,,,,,,,,,ef,Not Started,12,12,Health Information System
