@@ -83,7 +83,7 @@ df = pd.read_csv(data_url)
 
 uploaded_file = st.file_uploader("Please Enter a File")
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_excel(uploaded_file)
 
 
 main_df = df.set_index('Projects', append=True).swaplevel(0,1)
