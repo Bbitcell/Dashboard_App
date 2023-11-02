@@ -141,7 +141,7 @@ project_creation = st.button("Add New Project", type="primary")
 if project_creation:
     project_created = True
     df2 = pd.DataFrame(columns=st.session_state["main"].columns)
-    df2 = df2.append({'Projects': 'New Project'}, ignore_index = True)
+    df2 = pd.concat([df2, {'Projects': 'New Project'}])
     st.session_state["main"] = df2
 
 bk2 = st.session_state["main"].copy()
@@ -285,7 +285,7 @@ st.session_state["main"] = bk2.copy()
 if pd.notna(st.session_state["main"].iloc[-1][st.session_state["main"].columns[5:]]).any().any():
     project_name = st.session_state["main"]["Projects"][prj_index]
 
-    st.session_state["main"] = st.session_state["main"].append({'Projects': project_name}, ignore_index = True)
+    st.session_state["main"] = pd.concat([st.session_state["main"], {'Projects': project_name}])
 if not st.session_state["main"].equals(bk):
     st.rerun()
 
