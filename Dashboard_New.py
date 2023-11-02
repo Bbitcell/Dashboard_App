@@ -142,7 +142,7 @@ if project_creation:
     project_created = True
     df2 = pd.DataFrame(columns=st.session_state["main"].columns)
 
-    df3 = pd.DataFrame({'Projects': 'New Project'})
+    df3 =['Projects': 'New Project']
     df2 = pd.concat([df2, df3])
     st.session_state["main"] = df2
 
