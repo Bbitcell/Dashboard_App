@@ -82,7 +82,7 @@ def plot_diagram(df, op1, op2):
                     pass
                 condtion1 = is_numeric_dtype(df[op1])
                 condtion2 = is_numeric_dtype(df[op2])
-                print(data, condtion1, condtion2)
+
                 
                 if condtion1 and not condtion2:
                     colors = ['#CC3B33','#3b70c4','#43bc51','#ee8711']
@@ -112,7 +112,7 @@ def plot_diagram(df, op1, op2):
             plot_dr = st.image(buf, width = 800, use_column_width  = "never")
             return plot_dr
         except ValueError:
-            print("Select appropriate column")
+            pass
 
 
 
@@ -141,9 +141,7 @@ project_creation = st.button("Add New Project", type="primary")
 if project_creation:
     project_created = True
     df2 = pd.DataFrame(columns=st.session_state["main"].columns)
-
-    df3 =['Projects': 'New Project']
-    df2 = pd.concat([df2, df3])
+    df2 = df2.append({'Projects': 'New Project'}, ignore_index = True)
     st.session_state["main"] = df2
 
 bk2 = st.session_state["main"].copy()
@@ -158,7 +156,7 @@ if project_created:
     
 
     index = prj_df["Projects"].unique()
-    print(len(index))
+
     options = st.selectbox("Select Project", prj_df["Projects"].unique(), index = len(index) - 1)
 
     options = "New Project"
@@ -287,8 +285,7 @@ st.session_state["main"] = bk2.copy()
 if pd.notna(st.session_state["main"].iloc[-1][st.session_state["main"].columns[5:]]).any().any():
     project_name = st.session_state["main"]["Projects"][prj_index]
 
-    prj_df_new = pd.DataFrame({'Projects': project_name})
-    st.session_state["main"] = pd.concat([st.session_state["main"], prj_df_new])
+    st.session_state["main"] = st.session_state["main"].append({'Projects': project_name}, ignore_index = True)
 if not st.session_state["main"].equals(bk):
     st.rerun()
 
