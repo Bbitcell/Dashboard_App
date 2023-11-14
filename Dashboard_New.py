@@ -345,7 +345,6 @@ def main_page():
 
         
     if not st.session_state["main"].equals(bk):
-        st.session_state["main"].to_csv(fr"Dummy DATA New.csv")
         st.rerun()
 
 
