@@ -82,7 +82,7 @@ def plot_diagram(df, op1, op2):
                     pass
                 condtion1 = is_numeric_dtype(df[op1])
                 condtion2 = is_numeric_dtype(df[op2])
-
+                #print(data, condtion1, condtion2)
                 
                 if condtion1 and not condtion2:
                     colors = ['#CC3B33','#3b70c4','#43bc51','#ee8711']
@@ -112,190 +112,257 @@ def plot_diagram(df, op1, op2):
             plot_dr = st.image(buf, width = 800, use_column_width  = "never")
             return plot_dr
         except ValueError:
-            pass
+            print("Select appropriate column")
+
+
+def diagram_page():
+
+
+
+    df1 = st.session_state["main"]
+
+
+
+  
+
+
+    data = df1[["Department", "Level of Achievement by Dep.", "Projects"]]
+    
+
+
+    
+
+    counter = 0
+    
+
+    data = data.dropna()
+
+    unique_prj = data["Projects"].unique()
+    fig2, ax2 = plt.subplots(len(unique_prj))
+
+    colors = ['#CC3B33','#3b70c4','#43bc51','#ee8711']
+    if len(data["Projects"].unique()) > 1:
+        for i in data["Projects"].unique():
+            
+            rslt_df = data[data['Projects'].isin([i])] 
 
 
 
 
-if 'main' not in st.session_state:
-    st.session_state['main'] = 'value'
+            print(rslt_df)
+            if not rslt_df.empty:
 
-    uploaded_file = st.file_uploader("Please Enter a File")
-    if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
+                ax2[counter].pie( rslt_df["Level of Achievement by Dep."] , labels= rslt_df["Department"], autopct='%1.1f%%',colors = colors,
+                        shadow=False, startangle=90)
+                ax2[counter].title.set_text(i)
+            counter+=1
     else:
-        data_url = fr"Dummy DATA New.csv"
-        df = pd.read_csv(data_url)
-        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
-    df["Projects"] = pd.Series(df["Projects"]).fillna(method='ffill')
-    st.session_state["main"] = df.copy()
+        rslt_df = data[data['Projects'].isin([data["Projects"].unique()[0]])]
+        if not rslt_df.empty:
+            
+            ax2.pie( rslt_df["Level of Achievement by Dep."] , labels= rslt_df["Department"], autopct='%1.1f%%',colors = colors,
+                shadow=False, startangle=90)
+            ax2.title.set_text(data["Projects"].unique()[0])
+    buf1 = BytesIO()
+    fig2.savefig(buf1, format="png")
+    plot_dr2 = st.image(buf1, width = 1200, use_column_width  = "never")
 
-    columns = df.columns
-
-
-
-
-project_created = False
-
-project_creation = st.button("Add New Project", type="primary")
-if project_creation:
-    project_created = True
-    df2 = pd.DataFrame(columns=st.session_state["main"].columns)
-    df2 = df2.append({'Projects': 'New Project'}, ignore_index = True)
-    st.session_state["main"] = df2
-
-bk2 = st.session_state["main"].copy()
-columns = bk2.columns
-prj_df = st.session_state["main"]["Projects"]
-
-prj_df = pd.DataFrame(prj_df)
+def main_page():
+    uploaded_file = st.file_uploader("Please Enter a File")        
+    if 'main' not in st.session_state:
+        st.session_state['main'] = 'value'
 
 
+        if uploaded_file is not None:
+            df = pd.read_csv(uploaded_file)
+        else:
+            data_url = fr"Dummy DATA New.csv"
+            df = pd.read_csv(data_url)
+            df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        df["Projects"] = pd.Series(df["Projects"]).fillna(method='ffill')
+        st.session_state["main"] = df.copy()
 
-if project_created:
-    
-
-    index = prj_df["Projects"].unique()
-
-    options = st.selectbox("Select Project", prj_df["Projects"].unique(), index = len(index) - 1)
-
-    options = "New Project"
-    
-
-else:
-    options = st.selectbox("Select Project",prj_df["Projects"].unique(), index = 0)
-project_created = False
-all_prj_index = prj_df['Projects'].index.values.tolist()
-
-prj_index = st.session_state["main"][st.session_state["main"]['Projects']== options].index.values[0]
-
-mprj = st.session_state["main"]['Projects'].value_counts()[options]
-
-min_prj_index = st.session_state["main"].index[prj_index]
-max_prj_index = mprj + min_prj_index
-
-bk = st.session_state["main"].copy()
-
-
-two_dataset = filter_dataframe(st.session_state["main"][min_prj_index:max_prj_index]),
-
-df_prj_plt = pd.DataFrame(two_dataset[0])
-
-#labels = ["Achieved Activities Equal or Over  70% in the reporting period", "Achieved Activities Between 40%-<70% in the reporting period", "Achieved Activities Under 40% in the reporting period"]
-
-kpi_df = df_prj_plt
-
-
-#df_prj_plt = df_prj_plt[["Activities performed", "Department", "Cost", "Total Spended Budget", "Level of Achievement by Dep."]]
+        columns = df.columns
 
 
 
 
-#kpi_df = kpi_df[["KPI", " Total Actual Performance", "Targeted Performance"]]
-st.divider()
+                    
 
-col1, col2 = st.columns(2)
+    project_created = False
 
-with col1:
-    st.header("PROJECT STATUS REPORT")
+    project_creation = st.button("Add New Project", type="primary")
+    if project_creation:
+        project_created = True
+        df2 = pd.DataFrame(columns=st.session_state["main"].columns)
+        df2 = df2.append({'Projects': 'New Project'}, ignore_index = True)
+        st.session_state["main"] = df2
+
+    bk2 = st.session_state["main"].copy()
+    columns = bk2.columns
+    prj_df = st.session_state["main"]["Projects"]
+
+    prj_df = pd.DataFrame(prj_df)
+
+
+
+    if project_created:
+        
+
+        index = prj_df["Projects"].unique()
+        print(len(index))
+        options = st.selectbox("Select Project", prj_df["Projects"].unique(), index = len(index) - 1)
+
+        options = "New Project"
+        
+
+    else:
+        options = st.selectbox("Select Project",prj_df["Projects"].unique(), index = 0)
+    project_created = False
+    all_prj_index = prj_df['Projects'].index.values.tolist()
+
+    prj_index = st.session_state["main"][st.session_state["main"]['Projects']== options].index.values[0]
+
+    mprj = st.session_state["main"]['Projects'].value_counts()[options]
+
+    min_prj_index = st.session_state["main"].index[prj_index]
+    max_prj_index = mprj + min_prj_index
+
+    bk = st.session_state["main"].copy()
+
+
+    two_dataset = filter_dataframe(st.session_state["main"][min_prj_index:max_prj_index]),
+
+    df_prj_plt = pd.DataFrame(two_dataset[0])
+
+    #labels = ["Achieved Activities Equal or Over  70% in the reporting period", "Achieved Activities Between 40%-<70% in the reporting period", "Achieved Activities Under 40% in the reporting period"]
+
+    kpi_df = df_prj_plt
+
+
+    #df_prj_plt = df_prj_plt[["Activities performed", "Department", "Cost", "Total Spended Budget", "Level of Achievement by Dep."]]
+
+
+
+
+    #kpi_df = kpi_df[["KPI", " Total Actual Performance", "Targeted Performance"]]
     st.divider()
-    subcol1, subcol2, subcol3 = st.columns(3)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.header("PROJECT STATUS REPORT")
+        st.divider()
+        subcol1, subcol2, subcol3 = st.columns(3)
+        st.divider()
+        subcol4, subcol5, subcol6= st.columns(3)
+        with subcol1:
+            st.subheader("Project:")
+            st.subheader("Expected Activity:")
+            st.subheader("Unit in charge:")
+
+    #        st.subheader("Expected Activities:")
+    #        st.subheader("Alocated Budget:")
+
+        with subcol2:
+            df9 = st.session_state["main"].dropna(subset = "Projects")
+            st.session_state["main"]["Projects"][prj_index] = st.text_input(value  = df9["Projects"][prj_index], label = "7", label_visibility = "collapsed")
+            st.session_state["main"]["Expected Activities "][prj_index]  = st.text_input(value  = df9["Expected Activities "][prj_index], label = "10", label_visibility = "collapsed")
+            st.session_state["main"]["Unit in charge"][prj_index]  = st.text_input(value  = df9["Unit in charge"][prj_index], label = "8", label_visibility = "collapsed")
+
+    #        st.text_input(value  = prj_df["Project Manager"][prj_index], label = "6", label_visibility = "collapsed")
+    #        st.text_input(value  = prj_df["Alocated Budget:"][prj_index], label = "5", label_visibility = "collapsed")
+        with subcol4:
+    #        st.subheader("NO. Activities:")
+    #        st.text_input(value  = prj_df["Activities Type"][prj_index], label = "4", label_visibility = "collapsed", key = "key5")
+            st.subheader("Allocated Budget:")
+            st.subheader("Total Spended Budget:")
+        with subcol5:
+    #        st.text_input(value  = prj_df["Number of Activities"][prj_index], label = "3", label_visibility = "collapsed", key = "key6")
+            st.session_state["main"]["Allocated Budget"][prj_index] = st.text_input(value  = df9["Allocated Budget"][prj_index], label = "2", label_visibility = "collapsed", key = "key7")
+            st.session_state["main"]["Total Spended Budget"][prj_index] = st.text_input(value  = df9["Total Spended Budget"][prj_index], label = "1", label_visibility = "collapsed", key = "key8")
+    #with col2:
+    #    with subcol6:
+    #        st.subheader("Allocated Budget:")
+    #        st.subheader("Total Spended Budget:")
+    #    with subcol7:
+    #        st.text_input(value  = df["Allocated Budget"][prj_index], label = "2", label_visibility = "collapsed", key = "key7")
+    #        st.text_input(value  = df["Total Spended Budget"][prj_index], label = "1", label_visibility = "collapsed", key = "key8")
+
+
+    st.session_state["main"] = st.data_editor(kpi_df, key= "df1", column_order = ("KPI", " Total Actual Performance", "Targeted Performance"), num_rows = "dynamic", use_container_width = True, hide_index  = True, column_config={"Targeted Performance": st.column_config.SelectboxColumn( "Targeted Performance", width="medium", options=["Not Started" ,20, 40, 60, 80, 100], required=True), " Total Actual Performance": st.column_config.SelectboxColumn( " Total Actual Performance", width="medium", options=["Not Started" ,20, 40, 60, 80, 100], required=True)})
+
+
+
+
+    #print(df.head())
     st.divider()
-    subcol4, subcol5, subcol6= st.columns(3)
-    with subcol1:
-        st.subheader("Project:")
-        st.subheader("Expected Activity:")
-        st.subheader("Unit in charge:")
-
-#        st.subheader("Expected Activities:")
-#        st.subheader("Alocated Budget:")
-
-    with subcol2:
-        df9 = st.session_state["main"].dropna(subset = "Projects")
-        st.session_state["main"]["Projects"][prj_index] = st.text_input(value  = df9["Projects"][prj_index], label = "7", label_visibility = "collapsed")
-        st.session_state["main"]["Expected Activities "][prj_index]  = st.text_input(value  = df9["Expected Activities "][prj_index], label = "10", label_visibility = "collapsed")
-        st.session_state["main"]["Unit in charge"][prj_index]  = st.text_input(value  = df9["Unit in charge"][prj_index], label = "8", label_visibility = "collapsed")
-
-#        st.text_input(value  = prj_df["Project Manager"][prj_index], label = "6", label_visibility = "collapsed")
-#        st.text_input(value  = prj_df["Alocated Budget:"][prj_index], label = "5", label_visibility = "collapsed")
-    with subcol4:
-#        st.subheader("NO. Activities:")
-#        st.text_input(value  = prj_df["Activities Type"][prj_index], label = "4", label_visibility = "collapsed", key = "key5")
-        st.subheader("Allocated Budget:")
-        st.subheader("Total Spended Budget:")
-    with subcol5:
-#        st.text_input(value  = prj_df["Number of Activities"][prj_index], label = "3", label_visibility = "collapsed", key = "key6")
-        st.session_state["main"]["Allocated Budget"][prj_index] = st.text_input(value  = df9["Allocated Budget"][prj_index], label = "2", label_visibility = "collapsed", key = "key7")
-        st.session_state["main"]["Total Spended Budget"][prj_index] = st.text_input(value  = df9["Total Spended Budget"][prj_index], label = "1", label_visibility = "collapsed", key = "key8")
-#with col2:
-#    with subcol6:
-#        st.subheader("Allocated Budget:")
-#        st.subheader("Total Spended Budget:")
-#    with subcol7:
-#        st.text_input(value  = df["Allocated Budget"][prj_index], label = "2", label_visibility = "collapsed", key = "key7")
-#        st.text_input(value  = df["Total Spended Budget"][prj_index], label = "1", label_visibility = "collapsed", key = "key8")
 
 
-st.session_state["main"] = st.data_editor(kpi_df, key= "df1", column_order = ("KPI", " Total Actual Performance", "Targeted Performance"), num_rows = "dynamic", use_container_width = True, hide_index  = True, column_config={"Targeted Performance": st.column_config.SelectboxColumn( "Targeted Performance", width="medium", options=["Not Started" ,20, 40, 60, 80, 100], required=True), " Total Actual Performance": st.column_config.SelectboxColumn( " Total Actual Performance", width="medium", options=["Not Started" ,20, 40, 60, 80, 100], required=True)})
+    st.session_state["main"] = st.data_editor(st.session_state["main"], key=  "df2", column_order= ("Activities performed", "Department", "Cost", "Level of Achievement by Dep."), use_container_width = True, num_rows = "dynamic", hide_index  = True)
+
+
+    with col2:
+        st.session_state["df4"] = st.session_state["main"][["Activities performed", "Department", "Cost", "Total Spended Budget", "Level of Achievement by Dep.", "KPI", " Total Actual Performance", "Targeted Performance"]]
+        subcol7, subcol8 = st.columns(2)
+        
+        with subcol7:
+            option1 = st.selectbox(
+            'Select First Column to Compare',
+            (st.session_state["df4"].columns))
+        with subcol8:
+            option2 = st.selectbox(
+            'Select Second Column to Compare',
+            (st.session_state["df4"].columns))
 
 
 
-
-#print(df.head())
-st.divider()
-
-
-st.session_state["main"] = st.data_editor(st.session_state["main"], key=  "df2", column_order= ("Activities performed", "Department", "Cost", "Level of Achievement by Dep."), use_container_width = True, num_rows = "dynamic", hide_index  = True)
-
-
-with col2:
-    st.session_state["df4"] = st.session_state["main"][["Activities performed", "Department", "Cost", "Total Spended Budget", "Level of Achievement by Dep.", "KPI", " Total Actual Performance", "Targeted Performance"]]
-    subcol7, subcol8 = st.columns(2)
-    
-    with subcol7:
-        option1 = st.selectbox(
-        'Select First Column to Compare',
-        (st.session_state["df4"].columns))
-    with subcol8:
-        option2 = st.selectbox(
-        'Select Second Column to Compare',
-        (st.session_state["df4"].columns))
-
-
-
-    plot_dr = plot_diagram(st.session_state["df4"], option1, option2)
+        plot_dr = plot_diagram(st.session_state["df4"], option1, option2)
 
 
 
 
 
 
-#print(st.session_state["main"])
-st.divider()
+    #print(st.session_state["main"])
+    st.divider()
 
-bk2.update(st.session_state["main"][pd.notna(st.session_state["main"])])
-
-
-st.session_state["main"] = bk2.copy()
+    bk2.update(st.session_state["main"][pd.notna(st.session_state["main"])])
+    #bk2[bk2['Projects'].isin([options])].merge(st.session_state["main"][pd.notna(st.session_state["main"])], how = "inner")
 
 
+    st.session_state["main"] = bk2.copy()
 
-#print(st.session_state["main"] ["Projects"])
+    #print(st.session_state["main"])
 
-if pd.notna(st.session_state["main"].iloc[-1][st.session_state["main"].columns[5:]]).any().any():
-    project_name = st.session_state["main"]["Projects"][prj_index]
+    #print(st.session_state["main"] ["Projects"])
 
-    st.session_state["main"] = st.session_state["main"].append({'Projects': project_name}, ignore_index = True)
-if not st.session_state["main"].equals(bk):
-    st.rerun()
+    if pd.notna(st.session_state["main"].iloc[-1][st.session_state["main"].columns[5:]]).any().any():
+        project_name = st.session_state["main"]["Projects"][prj_index]
+
+        st.session_state["main"] = st.session_state["main"].append({'Projects': project_name}, ignore_index = True)
+        
+
+        
+    if not st.session_state["main"].equals(bk):
+        st.session_state["main"].to_csv(fr"Dummy DATA New.csv")
+        st.rerun()
 
 
 
-data_as_csv= st.session_state["main"].to_csv(index=False).encode("utf-8")
-st.download_button(
-    label="Download data as CSV",
-    data=data_as_csv,
-    file_name='large_df.csv',
-    mime='text/csv',
-)
+    data_as_csv= st.session_state["main"].to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="Download data as CSV",
+        data=data_as_csv,
+        file_name='large_df.csv',
+        mime='text/csv',
+    )
 
+page_names_to_funcs = {
+    "Main":main_page,
+    "Pie Charts": diagram_page,
+
+}
+
+demo_name = st.sidebar.selectbox("Select Page", page_names_to_funcs.keys())
+page_names_to_funcs[demo_name]()
