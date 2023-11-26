@@ -546,9 +546,9 @@ def main_page():
 
     #    st.session_state["main"] = st.session_state["main"].append({'Projects': project_name}, ignore_index = True)
     #bk = pd.concat([bk, st.session_state["bk3"]]).drop_duplicates(keep=False)
-    st.write(st.session_state["bk3"][st.session_state["bk3"]['Projects']== options].reset_index(drop=True))
-    st.write(bk2[bk2['Projects']== options].reset_index(drop=True))
-    st.write(bk[bk['Projects']== options].reset_index(drop=True))    
+    #st.write(st.session_state["bk3"][st.session_state["bk3"]['Projects']== options].reset_index(drop=True))
+    #st.write(bk2[bk2['Projects']== options].reset_index(drop=True))
+    #st.write(bk[bk['Projects']== options].reset_index(drop=True))    
 
     #st.write(((bk2[bk2['Projects']== options].reset_index(drop=True)).equals(bk[bk['Projects']== options].reset_index(drop=True)))) 
     if not (((bk2[bk2['Projects']== options].reset_index(drop=True))).applymap(str).equals((bk[bk['Projects']== options].reset_index(drop=True)).applymap(str))):
