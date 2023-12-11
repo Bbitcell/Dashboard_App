@@ -75,7 +75,7 @@ def set_png_as_page_bg(png_file):
     st.markdown(page_bg_img, unsafe_allow_html=True)
     return
 
-set_png_as_page_bg(fr"banner-cropped.png")
+set_png_as_page_bg("banner-cropped.png")
 
 
 style_image1 = """
@@ -87,7 +87,7 @@ display: block;
 justify-content: center;
 """
 
-file_ = open(fr"stamp9.gif", "rb")
+file_ = open("stamp9.gif", "rb")
 contents = file_.read()
 data_url = base64.b64encode(contents).decode("utf-8")
 file_.close()
@@ -96,8 +96,7 @@ st.markdown(
     f'<img src="data:image/gif;base64,{data_url}" alt="cat gif" style="{style_image1}">',
     unsafe_allow_html=True,
 )
-#image = Image.open(fr"stamp9.gif")
-#img2 = st.image(video_file, use_column_width  = "always", width = 10)
+
 tab1, tab2 = st.tabs(["Main", "Pie Chart"])
 
 
@@ -153,9 +152,19 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         value=(_min, _max),
                         step=step,
                     )
+
+                    null_df = df[df[column].isnull()]
+
+
+
                     if not df[~df[column].between(*user_num_input)].empty:
+
+                        
                         st.session_state['bk3'] = df[~df[column].between(*user_num_input)]
-                    df = df[df[column].between(*user_num_input)]
+                        st.write(st.session_state['bk3'])
+                    df = df[df[column].between(*user_num_input)].append(df[df[column].isnull()])
+
+
                 else:
                     user_text_input = right.text_input(
                         f"Substring or regex in {column}",
@@ -231,7 +240,7 @@ def local_css(file_name):
 
 
 def diagram_page():
-    df1 = pd.read_csv(fr"Temp_Data.csv")
+    df1 = pd.read_csv("Temp_Data.csv")
     data = df1[["Department", "Level of Achievement by Dep.", "Projects"]] 
     counter = 0
     data = data.dropna(how = "all")
@@ -291,7 +300,7 @@ def main_page():
 
 
 
-        data_url = fr"Dummy DATA New 3.csv"
+        data_url = "Dummy DATA New 3.csv"
         df = pd.read_csv(data_url)
         df["Projects"] = pd.Series(df["Projects"]).fillna(method='ffill')
         df = df.sort_values(by= ["Projects", "Unit in charge", "Allocated Budget", "Total Spended Budget", "Expected Activities "]).reindex()
@@ -301,16 +310,18 @@ def main_page():
         st.session_state["main"] = df.copy()
         bk2 = st.session_state["main"].copy()
 
-        st.session_state["main"].to_csv(fr"Temp_Data.csv")
+        st.session_state["main"].to_csv("Temp_Data.csv")
             
 
 
         columns = df.columns
     else:
-        data_url = fr"Temp_Data.csv"
+        data_url = "Temp_Data.csv"
         bk2 = pd.read_csv(data_url)
         #bk2["Projects"] = pd.Series(bk2["Projects"]).fillna(method='ffill')
-        bk2 = bk2.sort_values(by= ["Projects", "KPI"]).reindex()
+
+        bk2 = bk2.sort_values(by= ["Projects", "KPI"])
+        bk2 = bk2.reindex()
         bk2["Allocated Budget"] = bk2["Allocated Budget"].astype("Int64")
         bk2["Total Spended Budget"] = bk2["Total Spended Budget"].astype("Int64")
         bk2 = bk2.loc[:, ~bk2.columns.str.contains('^Unnamed')]
@@ -332,8 +343,8 @@ def main_page():
         #df2 = pd.DataFrame(columns=st.session_state["main"].columns)
         st.session_state["main"] = st.session_state["main"].append({'Projects': 'New Project'}, ignore_index = True)
         
-        st.session_state["main"] = st.session_state["main"].sort_values(by= ["Projects"]).reindex()
-        st.session_state["main"].reindex().to_csv(fr"Temp_Data.csv")
+        st.session_state["main"] = st.session_state["main"].sort_values(by= ["Projects"])
+        st.session_state["main"].to_csv("Temp_Data.csv")
 
         st.rerun()
         
@@ -401,10 +412,10 @@ def main_page():
     
     st.session_state["bk3"] = st.session_state["bk3"].dropna(how = "all", subset = ["Unit in charge", "Allocated Budget", "Total Spended Budget", "Expected Activities ", "Activities performed", "Department", "Cost", "Total Spended Budget", "Level of Achievement by Dep.", "KPI", " Total Actual Performance", "Targeted Performance"])
     
-    #st.write(kpi_df.iloc[-1,1:].isnull().any())
+    st.write(kpi_df.iloc[:,5:].isnull())
 
-    if not kpi_df.iloc[-1,5:].isnull().all():
-
+    if not kpi_df.iloc[:,5:].isnull().all(axis=1).any():
+        
 
         kpi_df = kpi_df.append({'Projects': options}, ignore_index=True)
 
@@ -546,9 +557,7 @@ def main_page():
 
     #    st.session_state["main"] = st.session_state["main"].append({'Projects': project_name}, ignore_index = True)
     #bk = pd.concat([bk, st.session_state["bk3"]]).drop_duplicates(keep=False)
-    #st.write(st.session_state["bk3"][st.session_state["bk3"]['Projects']== options].reset_index(drop=True))
-    #st.write(bk2[bk2['Projects']== options].reset_index(drop=True))
-    #st.write(bk[bk['Projects']== options].reset_index(drop=True))    
+
 
     #st.write(((bk2[bk2['Projects']== options].reset_index(drop=True)).equals(bk[bk['Projects']== options].reset_index(drop=True)))) 
     if not (((bk2[bk2['Projects']== options].reset_index(drop=True))).applymap(str).equals((bk[bk['Projects']== options].reset_index(drop=True)).applymap(str))):
@@ -559,8 +568,8 @@ def main_page():
             st.session_state["main"] = st.session_state["main"].append(st.session_state["bk3"], ignore_index=True)
             st.session_state["bk3"] = st.session_state["bk3"].iloc[0:0]
         
-        st.session_state["main"] = st.session_state["main"].sort_values(by= ["Projects"]).reindex()
-        st.session_state["main"].reindex().to_csv(fr"Temp_Data.csv")
+        st.session_state["main"] = st.session_state["main"].sort_values(by= ["Projects"])
+        st.session_state["main"].to_csv("Temp_Data.csv")
         condition = False
     
     
@@ -569,17 +578,17 @@ def main_page():
 
 
     save = st.button(
-        label="Download data as CSV")
+        label="Save")
     
     if save:
-        st.session_state["main"].to_csv(fr"Dummy DATA New 3.csv")
+        st.session_state["main"].to_csv("Dummy DATA New 3.csv")
         save = False
 
 with tab1:
     uploaded_file = st.file_uploader("Please Enter a File")
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        df.to_csv(fr"Dummy DATA New 3.csv")
+        df.to_csv("Dummy DATA New 3.csv")
 
     main_page()
 
