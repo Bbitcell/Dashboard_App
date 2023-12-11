@@ -161,7 +161,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
                         
                         st.session_state['bk3'] = df[~df[column].between(*user_num_input)]
-                        st.write(st.session_state['bk3'])
+
                     df = df[df[column].between(*user_num_input)].append(df[df[column].isnull()])
 
 
@@ -412,7 +412,6 @@ def main_page():
     
     st.session_state["bk3"] = st.session_state["bk3"].dropna(how = "all", subset = ["Unit in charge", "Allocated Budget", "Total Spended Budget", "Expected Activities ", "Activities performed", "Department", "Cost", "Total Spended Budget", "Level of Achievement by Dep.", "KPI", " Total Actual Performance", "Targeted Performance"])
     
-    st.write(kpi_df.iloc[:,5:].isnull())
 
     if not kpi_df.iloc[:,5:].isnull().all(axis=1).any():
         
