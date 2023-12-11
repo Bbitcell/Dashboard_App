@@ -87,7 +87,7 @@ display: block;
 justify-content: center;
 """
 
-file_ = open("stamp9.gif", "rb")
+file_ = open("stamp animated.gif", "rb")
 contents = file_.read()
 data_url = base64.b64encode(contents).decode("utf-8")
 file_.close()
